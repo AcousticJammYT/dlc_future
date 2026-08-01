@@ -13,7 +13,7 @@ function item:init()
     })
 	
     if Game:getFlag("future_variable") == "ceroba" then
-		reactions["fmarcy"] = {
+		self.reactions["fmarcy"] = {
 			fmarcy = "...Iced tea.",
 			jamm = "(Do you not like iced tea?)"
 		}
