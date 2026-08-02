@@ -19,6 +19,8 @@ function Noelle_Battle:init()
     -- Add the dummy enemy to the encounter
     self.noelle = self:addEnemy("fnoelle_weird", 550, 228)
 
+    self.flee = false
+
     self.enemy_tension_bar_on_start = true
 end
 

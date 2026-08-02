@@ -3,10 +3,9 @@ local FNoelle, super = Class(EnemyBattler)
 function FNoelle:init()
     super.init(self)
 
-    -- Enemy name
     self.name = "Noelle"
-    -- Sets the actor, which handles the enemy's sprites (see scripts/data/actors/dummy.lua)
-    self:setActor("dummy")
+    self:setActor("fnoelle")
+    self:setAnimation("enemy/transition")
 
     -- Enemy health
     self.max_health = 1700
@@ -20,9 +19,11 @@ function FNoelle:init()
 
     -- Mercy given when sparing this enemy before its spareable (20% for basic enemies)
     self.spare_points = 0
-	
+
+    self.exit_on_defeat = false
+
 	self.service_mercy = 0
-	
+
 	self.tired_percentage = 0
 	self.low_health_percentage = 0
 
@@ -48,8 +49,10 @@ function FNoelle:init()
         "* Smells like cardboard.",
     }
 
+    self.transitioning = true
+
     self.crimson_spire_timer = 0
-	
+
     self.wake_first = true
     self.fail_first = true
     self.win_first = true
@@ -57,12 +60,18 @@ end
 
 function FNoelle:update()
     super.update(self)
+
+    if self.transitioning and Game.battle.state ~= "TRANSITION" and Game.battle.state ~= "INTRO" then
+        self.transitioning = false
+        self:setAnimation("enemy/idle")
+    end
+
     self.crimson_spire_timer = (self.crimson_spire_timer or 0) + DTMULT
 
     if self.crimson_spire_timer >= 4 then
         self.crimson_spire_timer = self.crimson_spire_timer - 4
 
-        if self.health > Utils.round(self.max_health / 6) then
+        if self.health > MathUtils.round(self.max_health / 6) then
             self.health = self.health - 1
         end
     end
@@ -152,28 +161,21 @@ end
 
 function FNoelle:onDefeat()
     Game:setFlag("dark_future_ending", "kill")
-    Game.battle:returnToWorld()
+    self:toggleOverlay(false)
+    self:setAnimation("defeat")
+    Game.battle:setState("TRANSITIONOUT")
 end
 
 function FNoelle:onDefeatThorn()
     Game.battle.timer:after(1, function()
         Game.battle:startCutscene(function(cutscene)
-            self:setAnimation("battle/defeat")
+            self:toggleOverlay(false)
+            self:setAnimation("defeat")
             Assets.playSound("noise")
             cutscene:wait(0.75)
-            Game.battle.music:fade(0, 1/3)
-            Game.battle.tension_bar.animating_in = false
-            Game.battle.tension_bar.shown = false
-            Game.battle.tension_bar.physics.speed_x = -10
-            Game.battle.tension_bar.physics.friction = -0.4
-            Game.battle.battle_ui:transitionOut()
-            Game.battle.timer:tween(0.5, Game.battle.party[1], {x=Game.battle.party_beginning_positions[1][1], y=Game.battle.party_beginning_positions[1][2]})
-            Game.battle.timer:tween(0.5, Game.battle.party[2], {x=Game.battle.party_beginning_positions[2][1], y=Game.battle.party_beginning_positions[2][2]})
-            Game.battle.timer:tween(0.5, Game.battle.party[3], {x=Game.battle.party_beginning_positions[3][1], y=Game.battle.party_beginning_positions[3][2]})
-            Game.battle.timer:tween(0.5, Game.battle.enemies[1], {x=Game.battle.enemy_beginning_positions[Game.battle.enemies[1]][1], y=Game.battle.enemy_beginning_positions[Game.battle.enemies[1]][2]})
-            Game:setFlag("dark_future_ending", "kill")
-            cutscene:wait(0.75)
-            Game.battle:returnToWorld()
+            cutscene:after(function()
+                Game.battle:setState("TRANSITIONOUT")
+            end)
         end)
     end)
 end
