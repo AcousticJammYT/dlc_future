@@ -2,14 +2,11 @@
 ---@overload fun(...) : TitanSpawnPurifySoul
 local TitanSpawnPurifySoul, super = Class(Object)
 
-function TitanSpawnPurifySoul:init(texture, x, y, semi, target)
-    self.texture = Assets.getTexture(texture or "player/heart_centered") -- spr_heart_centered is the sprite used for the original object in DR.
+function TitanSpawnPurifySoul:init(x, y, targets, heart_texture)
+    self.texture = heart_texture or Assets.getTexture("player/heart_centered") -- spr_heart_centered is the sprite used for the original object in DR.
     super.init(self, x, y, self.texture:getWidth(), self.texture:getHeight())
 
     self:setOrigin(0.5, 0.5)
-
-    self.semi = semi or false
-    self.target = target or Game.battle.enemies[1]
 
     self.siner = 0
     self.t = 395
@@ -30,6 +27,9 @@ function TitanSpawnPurifySoul:init(texture, x, y, semi, target)
     self.soundcon = 1
     self.enemymovecon = 1
     self.enemysparecon = 1
+
+    -- for better customizability
+    self.targets = targets or Game.battle:getActiveEnemies()
 end
 
 function TitanSpawnPurifySoul:draw()
@@ -91,19 +91,9 @@ function TitanSpawnPurifySoul:draw()
     --white fade rectangle & move titan spawn enemies offscreen
     if self.t >= 450 then
         if self.enemymovecon == 1 then
-            if self.semi then
-                if self.target.id == "titan_spawn" then
-                    self.target.x = self.target.x + 300
-                elseif self.target.collapse then
-                    self.target.sprite.eye.rotating = false
-                end
-            else
-                for _, enemy in ipairs(Game.battle:getActiveEnemies()) do
-                    if enemy.id == "titan_spawn" then
-                        enemy.x = enemy.x + 300
-                    elseif enemy.collapse then
-                        enemy.sprite.eye.rotating = false
-                    end
+            for _, enemy in ipairs(self.targets) do
+                if enemy.onPurifyStart then
+                    enemy:onPurifyStart()
                 end
             end
             self.enemymovecon = 2
@@ -134,23 +124,9 @@ function TitanSpawnPurifySoul:draw()
     --purify titan spawn enemies
     if self.t >= 500 then
         if self.enemysparecon == 1 then
-            if self.semi then
-                if self.target.id == "titan_spawn" then
-                    self.target:spare()
-                elseif self.target.collapse then
-                    Assets.playSound("laz_titan")
-                    self.target.sprite.eye.sprite:fadeTo(0, 1)
-                    self.target.weakspot = true
-                end
-            else
-                for _, enemy in ipairs(Game.battle:getActiveEnemies()) do
-                    if enemy.id == "titan_spawn" then
-                        enemy:spare()
-                    elseif enemy.collapse then
-                        Assets.stopAndPlaySound("laz_titan")
-                        enemy.sprite.eye.sprite:fadeTo(0, 1)
-                        enemy.weakspot = true
-                    end
+            for _, enemy in ipairs(self.targets) do
+                if enemy.onPurifyEnd then
+                    enemy:onPurifyEnd()
                 end
             end
             self.enemysparecon = 2

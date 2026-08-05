@@ -239,14 +239,12 @@ function TitanSpawn:onAct(battler, name)
             cutscene:text("* "..battler.chara:getName().."'s SOUL emitted a brilliant \nlight!")
             battler:flash()
 
-            local bx, by = battler:getRelativePos(battler.width/2 + 4, battler.height/2 + 4)
+            local bx, by = battler:getRelativePos(battler.width / 2 + 4, battler.height / 2 + 4)
 
-            local semi = false
-            local texture = "player/heart_centered"
-            if name == "Semi-Banish" then semi = true end
-            if battler.chara.id == "susie" then texture = "player/heart_centered_flip" end -- hacky
-            local soul = Game.battle:addChild(TitanSpawnPurifySoul(texture, bx, by, semi, self))
-            soul.color = Game:getPartyMember(Game.party[1].id).soul_color or { 1, 0, 0 }
+            local targets = Game.battle:getActiveEnemies()
+            if name == "Semi-Banish" then targets = { self } end
+            local soul = Game.battle:addChild(TitanSpawnPurifySoul(bx, by, targets, Assets.getTexture("player/" .. battler.chara:getSoulFacing() .. "/heart_centered")))
+            soul.color = { battler.chara:getSoulColor() }
             soul.layer = 501
 
             cutscene:wait(function() return soul.t >= 500 end)
@@ -270,7 +268,7 @@ function TitanSpawn:onAct(battler, name)
 			end
 			battler:setAnimation("attack_unarmed")
 			Assets.playSound("ui_cancel_small")
-			Assets.playSound("damage",0.94)
+			Assets.playSound("damage", 0.94)
             local dmg_sprite = Sprite("effects/attack/slap_s")
             dmg_sprite:setOrigin(0.5, 0.5)
             dmg_sprite:setScale(1, 1)
@@ -438,6 +436,14 @@ function TitanSpawn:getEncounterText()
 	else
 		return super.getEncounterText(self)
 	end
+end
+
+function TitanSpawn:onPurifyStart()
+	self.x = self.x + 300
+end
+
+function TitanSpawn:onPurifyEnd()
+	self:spare()
 end
 
 return TitanSpawn
