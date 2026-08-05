@@ -18,13 +18,10 @@ function Dummy:init()
     -- Enemy reward
     self.money = 100
     self.t_siner = 0
-	
-	-- for sealing the eye
-	self.collapse = true
-    	
+
 	self.tired_percentage = 0
     self.low_health_percentage = 0
-	
+
 	self.disable_mercy = true
 
     -- Mercy given when sparing this enemy before its spareable (20% for basic enemies)
@@ -65,10 +62,8 @@ function Dummy:onAct(battler, name)
 
             local bx, by = battler:getRelativePos(battler.width/2 + 4, battler.height/2 + 4)
 
-            local texture = "player/heart_centered"
-            if battler.chara.id == "susie" then texture = "player/heart_centered_flip" end -- hacky
-            local soul = Game.battle:addChild(TitanSpawnPurifySoul(texture, bx, by, true, self))
-            soul.color = battler.chara.soul_color or { 1, 0, 0 }
+           local soul = Game.battle:addChild(TitanSpawnPurifySoul(bx, by, { self }, Assets.getTexture("player/" .. battler.chara:getSoulFacing() .. "/heart_centered")))
+            soul.color = { battler.chara:getSoulColor() }
             soul.layer = 501
 
             cutscene:wait(function() return soul.t >= 500 end)
@@ -100,12 +95,12 @@ function Dummy:update()
 end
 
 function Dummy:getSpareText(battler, success)
-    return "* But,[wait:20] it was not something that\ncan understand MERCY."
+    return "* But, it was not something that\ncan understand MERCY."
 end
 
 function Dummy:getEncounterText()
 	if self.weakspot then
-		return "* Creature Ψ's weak spot has been revealed! It's defense dropped dramatically!"
+		return "* Creature Ψ's DEFENSE dropped massively! ATTACKs are super effective!"
 	else
 		return super.getEncounterText(self)
 	end
@@ -137,6 +132,16 @@ function Dummy:onTurnEnd()
         self.weakspot = false
         self.weakspot_will_close = false
     end
+end
+
+function Dummy:onPurifyStart()
+	self.sprite.eye.rotating = false
+end
+
+function Dummy:onPurifyEnd()
+	Assets.stopAndPlaySound("laz_titan")
+    self.sprite.eye.sprite:fadeTo(0, 1)
+    self.weakspot = true
 end
 
 return Dummy
