@@ -21,10 +21,13 @@ function Marcy:init()
 	Game.battle:registerXAction("jamm", "Check", "Useless\nanalysis")
 
 	self.reaches = 0
+
+	self.saved_pp = 0
 end
 
 function Marcy:onGameOver()
 	Game.battle:startCutscene(function(cutscene)
+		Game.pp = self.saved_pp
 		Game.battle.tension_bar:hide()
 		Game.battle.battle_ui:transitionOut()
 		Game.battle.party[1]:toggleOverlay(false)
@@ -60,8 +63,60 @@ function Marcy:getDialogueCutscene()
 			cutscene:battlerText(marcy, "You want to prove\nyourself?", {x=marcy.x - 40, y=marcy.y - 60})
 			cutscene:battlerText(marcy, "Then show me what\nyou can really do.", {x=marcy.x - 40, y=marcy.y - 60})
 			Game:setFlag("marcy_training_ever_attacked", true)
+			if Game.pp > 0 then
+				if not Game:getFlag("marcy_training_shield_noticed") then
+					cutscene:battlerText(marcy, "Also,[wait:5] hey,[wait:5] don't\nthink I didn't notice\nthe shield you have.", {x=marcy.x - 40, y=marcy.y - 60})
+					cutscene:battlerText(jamm, "Huh?[wait:5] What shield?", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+					cutscene:battlerText(marcy, "Don't play dumb,[wait:5]\ndad.", {x=marcy.x - 40, y=marcy.y - 60})
+					if Game:getFlag("future_variable") == "ceroba" then
+						cutscene:battlerText(marcy, "Did Ceroba give\nit to you?", {x=marcy.x - 40, y=marcy.y - 60})
+					end
+					cutscene:battlerText(marcy, "In any case,[wait:5]\nI want this to be\na fair fight.", {x=marcy.x - 40, y=marcy.y - 60})
+					Game:setFlag("marcy_training_shield_noticed", true)
+				else
+					cutscene:battlerText(marcy, "Oh,[wait:5] and...", {x=marcy.x - 40, y=marcy.y - 60})
+				end
+				Assets.playSound("boost")
+				marcy:setAnimation("battle/spell")
+				jamm:setSprite("trip")
+				jamm:flash()
+				self.saved_pp = Game.pp
+				Game.pp = 0
+				cutscene:text("* Marcy un-casted the soul shield!")
+				cutscene:battlerText(jamm, "H...[wait:5] hey!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+				jamm:setAnimation("battle/idle")
+				marcy:setAnimation("battle/idle")
+				cutscene:battlerText(marcy, "You'll get it back\nafter the fight.", {x=marcy.x - 40, y=marcy.y - 60})
+			end
 			cutscene:gotoCutscene("fmarcy_spells")
         end
+	elseif Game.pp > 0 then
+		return function(cutscene)
+			local jamm = cutscene:getCharacter("jamm")
+			local marcy = cutscene:getCharacter("fmarcy")
+			if not Game:getFlag("marcy_training_shield_noticed") then
+				cutscene:battlerText(marcy, "Hey now,[wait:5] don't\nthink I didn't notice\nthe shield you have.", {x=marcy.x - 40, y=marcy.y - 60})
+				cutscene:battlerText(jamm, "Huh?[wait:5] What shield?", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+				cutscene:battlerText(marcy, "Don't play dumb,[wait:5]\ndad.", {x=marcy.x - 40, y=marcy.y - 60})
+				if Game:getFlag("future_variable") == "ceroba" then
+					cutscene:battlerText(marcy, "Did Ceroba give\nit to you?", {x=marcy.x - 40, y=marcy.y - 60})
+				end
+				cutscene:battlerText(marcy, "In any case,[wait:5]\nI want this to be\na fair fight.", {x=marcy.x - 40, y=marcy.y - 60})
+				Game:setFlag("marcy_training_shield_noticed", true)
+			end
+			Assets.playSound("boost")
+			marcy:setAnimation("battle/spell")
+			jamm:setSprite("trip")
+			jamm:flash()
+			self.saved_pp = Game.pp
+			Game.pp = 0
+			cutscene:text("* Marcy un-casted the soul shield!")
+			cutscene:battlerText(jamm, "H...[wait:5] hey!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+			jamm:setAnimation("battle/idle")
+			marcy:setAnimation("battle/idle")
+			cutscene:battlerText(marcy, "You'll get it back\nafter the fight.", {x=marcy.x - 40, y=marcy.y - 60})
+			cutscene:gotoCutscene("fmarcy_spells")
+		end
 	elseif self.marcy.health < 1500 and not self.jamm_disarmed then
 		self.jamm_disarmed = true
 		return function(cutscene)
