@@ -69,7 +69,7 @@ function Marcy:getDialogueCutscene()
 						cutscene:battlerText(marcy, "Did Ceroba give\nit to you?", {x=marcy.x - 40, y=marcy.y - 60})
 					end
 					cutscene:battlerText(jamm, "W-wait a minute...!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
-					cutscene:battlerText(jamm, "Ceroba, this is\na duel! You\ngotta honor it!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+					cutscene:battlerText(jamm, "Ceroba,[wait:5] this is\na duel![wait:10] You\ngotta honor it!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
 					cutscene:battlerText(marcy, "...You really didn't\nknow?", {x=marcy.x - 40, y=marcy.y - 60})
 					cutscene:battlerText(jamm, "I'm just as surprised\nas you are.", {x=jamm.x + 40, y=jamm.y - 50, right=true})
 					cutscene:battlerText(marcy, "...Got it.", {x=marcy.x - 40, y=marcy.y - 60})
