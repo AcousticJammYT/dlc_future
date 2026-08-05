@@ -65,14 +65,23 @@ function Marcy:getDialogueCutscene()
 					cutscene:battlerText(marcy, "Also,[wait:5] don't you\nthink I didn't notice\nthe shield you have.", {x=marcy.x - 40, y=marcy.y - 60})
 					cutscene:battlerText(jamm, "Huh?[wait:5] What shield?", {x=jamm.x + 40, y=jamm.y - 50, right=true})
 					cutscene:battlerText(marcy, "Don't play dumb,[wait:5]\ndad.", {x=marcy.x - 40, y=marcy.y - 60})
-					if Game:getFlag("future_variable") == "ceroba" then	-- why else would Jamm have it?
+					if Game:getFlag("future_variable") == "ceroba" then
 						cutscene:battlerText(marcy, "Did Ceroba give\nit to you?", {x=marcy.x - 40, y=marcy.y - 60})
 					end
 					cutscene:battlerText(jamm, "W-wait a minute...!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
-					cutscene:battlerText(jamm, "Ceroba,[wait:5] this is\na duel![wait:10] You\ngotta honor it!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+					if Game:getFlag("future_variable") == "ceroba" then
+						cutscene:battlerText(jamm, "Ceroba,[wait:5] this is\na duel![wait:10] You\ngotta honor it!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+					else
+						cutscene:battlerText(jamm, "Do we still\nhave that???", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+					end
 					cutscene:battlerText(marcy, "...You really didn't\nknow?", {x=marcy.x - 40, y=marcy.y - 60})
-					cutscene:battlerText(jamm, "I'm just as surprised\nas you are.", {x=jamm.x + 40, y=jamm.y - 50, right=true})
-					cutscene:battlerText(marcy, "...Got it.", {x=marcy.x - 40, y=marcy.y - 60})
+					if Game:getFlag("future_variable") == "ceroba" then
+						cutscene:battlerText(jamm, "I'm just as surprised\nas you are.", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+						cutscene:battlerText(marcy, "...Got it.", {x=marcy.x - 40, y=marcy.y - 60})
+					else
+						cutscene:battlerText(jamm, "I guess we're just\nthat good.", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+						cutscene:battlerText(marcy, "...Likely story.", {x=marcy.x - 40, y=marcy.y - 60})
+					end
 					Game:setFlag("marcy_training_shield_noticed", true)
 				else
 					cutscene:battlerText(marcy, "Oh,[wait:5] and...", {x=marcy.x - 40, y=marcy.y - 60})
@@ -99,10 +108,19 @@ function Marcy:getDialogueCutscene()
 					cutscene:battlerText(marcy, "Did Ceroba give\nit to you?", {x=marcy.x - 40, y=marcy.y - 60})
 				end
 				cutscene:battlerText(jamm, "W-wait a minute...!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
-				cutscene:battlerText(jamm, "Ceroba, this is\na duel! You\ngotta honor it!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+				if Game:getFlag("future_variable") == "ceroba" then
+					cutscene:battlerText(jamm, "Ceroba,[wait:5] this is\na duel![wait:10] You\ngotta honor it!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+				else
+					cutscene:battlerText(jamm, "Do we still\nhave that???", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+				end
 				cutscene:battlerText(marcy, "...You really didn't\nknow?", {x=marcy.x - 40, y=marcy.y - 60})
-				cutscene:battlerText(jamm, "I'm just as surprised\nas you are.", {x=jamm.x + 40, y=jamm.y - 50, right=true})
-				cutscene:battlerText(marcy, "...Got it.", {x=marcy.x - 40, y=marcy.y - 60})
+				if Game:getFlag("future_variable") == "ceroba" then
+					cutscene:battlerText(jamm, "I'm just as surprised\nas you are.", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+					cutscene:battlerText(marcy, "...Got it.", {x=marcy.x - 40, y=marcy.y - 60})
+				else
+					cutscene:battlerText(jamm, "I guess we're just\nthat good.", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+					cutscene:battlerText(marcy, "...Likely story.", {x=marcy.x - 40, y=marcy.y - 60})
+				end
 				Game:setFlag("marcy_training_shield_noticed", true)
 			end
 			Assets.playSound("boost")
