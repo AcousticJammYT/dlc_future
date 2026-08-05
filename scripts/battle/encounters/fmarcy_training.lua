@@ -21,13 +21,10 @@ function Marcy:init()
 	Game.battle:registerXAction("jamm", "Check", "Useless\nanalysis")
 
 	self.reaches = 0
-
-	self.saved_pp = 0
 end
 
 function Marcy:onGameOver()
 	Game.battle:startCutscene(function(cutscene)
-		Game.pp = self.saved_pp
 		Game.battle.tension_bar:hide()
 		Game.battle.battle_ui:transitionOut()
 		Game.battle.party[1]:toggleOverlay(false)
@@ -65,28 +62,28 @@ function Marcy:getDialogueCutscene()
 			Game:setFlag("marcy_training_ever_attacked", true)
 			if Game.pp > 0 then
 				if not Game:getFlag("marcy_training_shield_noticed") then
-					cutscene:battlerText(marcy, "Also,[wait:5] hey,[wait:5] don't\nthink I didn't notice\nthe shield you have.", {x=marcy.x - 40, y=marcy.y - 60})
+					cutscene:battlerText(marcy, "Also,[wait:5] don't you\nthink I didn't notice\nthe shield you have.", {x=marcy.x - 40, y=marcy.y - 60})
 					cutscene:battlerText(jamm, "Huh?[wait:5] What shield?", {x=jamm.x + 40, y=jamm.y - 50, right=true})
 					cutscene:battlerText(marcy, "Don't play dumb,[wait:5]\ndad.", {x=marcy.x - 40, y=marcy.y - 60})
-					if Game:getFlag("future_variable") == "ceroba" then
+					if Game:getFlag("future_variable") == "ceroba" then	-- why else would Jamm have it?
 						cutscene:battlerText(marcy, "Did Ceroba give\nit to you?", {x=marcy.x - 40, y=marcy.y - 60})
 					end
-					cutscene:battlerText(marcy, "In any case,[wait:5]\nI want this to be\na fair fight.", {x=marcy.x - 40, y=marcy.y - 60})
+					cutscene:battlerText(jamm, "W-wait a minute...!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+					cutscene:battlerText(jamm, "Ceroba, this is\na duel! You\ngotta honor it!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+					cutscene:battlerText(marcy, "...You really didn't\nknow?", {x=marcy.x - 40, y=marcy.y - 60})
+					cutscene:battlerText(jamm, "I'm just as surprised\nas you are.", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+					cutscene:battlerText(marcy, "...Got it.", {x=marcy.x - 40, y=marcy.y - 60})
 					Game:setFlag("marcy_training_shield_noticed", true)
 				else
 					cutscene:battlerText(marcy, "Oh,[wait:5] and...", {x=marcy.x - 40, y=marcy.y - 60})
 				end
 				Assets.playSound("boost")
 				marcy:setAnimation("battle/spell")
-				jamm:setSprite("trip")
 				jamm:flash()
-				self.saved_pp = Game.pp
+				-- self.saved_pp = Game.pp	-- I don't think Marcy would have the ability to give it back, especially if she's asleep
 				Game.pp = 0
 				cutscene:text("* Marcy un-casted the soul shield!")
-				cutscene:battlerText(jamm, "H...[wait:5] hey!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
-				jamm:setAnimation("battle/idle")
 				marcy:setAnimation("battle/idle")
-				cutscene:battlerText(marcy, "You'll get it back\nafter the fight.", {x=marcy.x - 40, y=marcy.y - 60})
 			end
 			cutscene:gotoCutscene("fmarcy_spells")
         end
@@ -95,26 +92,26 @@ function Marcy:getDialogueCutscene()
 			local jamm = cutscene:getCharacter("jamm")
 			local marcy = cutscene:getCharacter("fmarcy")
 			if not Game:getFlag("marcy_training_shield_noticed") then
-				cutscene:battlerText(marcy, "Hey now,[wait:5] don't\nthink I didn't notice\nthe shield you have.", {x=marcy.x - 40, y=marcy.y - 60})
+				cutscene:battlerText(marcy, "Hey,[wait:5] don't you\nthink I didn't notice\nthe shield you have.", {x=marcy.x - 40, y=marcy.y - 60})
 				cutscene:battlerText(jamm, "Huh?[wait:5] What shield?", {x=jamm.x + 40, y=jamm.y - 50, right=true})
 				cutscene:battlerText(marcy, "Don't play dumb,[wait:5]\ndad.", {x=marcy.x - 40, y=marcy.y - 60})
-				if Game:getFlag("future_variable") == "ceroba" then
+				if Game:getFlag("future_variable") == "ceroba" then	-- why else would Jamm have it?
 					cutscene:battlerText(marcy, "Did Ceroba give\nit to you?", {x=marcy.x - 40, y=marcy.y - 60})
 				end
-				cutscene:battlerText(marcy, "In any case,[wait:5]\nI want this to be\na fair fight.", {x=marcy.x - 40, y=marcy.y - 60})
+				cutscene:battlerText(jamm, "W-wait a minute...!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+				cutscene:battlerText(jamm, "Ceroba, this is\na duel! You\ngotta honor it!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+				cutscene:battlerText(marcy, "...You really didn't\nknow?", {x=marcy.x - 40, y=marcy.y - 60})
+				cutscene:battlerText(jamm, "I'm just as surprised\nas you are.", {x=jamm.x + 40, y=jamm.y - 50, right=true})
+				cutscene:battlerText(marcy, "...Got it.", {x=marcy.x - 40, y=marcy.y - 60})
 				Game:setFlag("marcy_training_shield_noticed", true)
 			end
 			Assets.playSound("boost")
 			marcy:setAnimation("battle/spell")
-			jamm:setSprite("trip")
 			jamm:flash()
-			self.saved_pp = Game.pp
+			-- self.saved_pp = Game.pp	-- I don't think Marcy would have the ability to give it back, especially if she's asleep
 			Game.pp = 0
 			cutscene:text("* Marcy un-casted the soul shield!")
-			cutscene:battlerText(jamm, "H...[wait:5] hey!", {x=jamm.x + 40, y=jamm.y - 50, right=true})
-			jamm:setAnimation("battle/idle")
 			marcy:setAnimation("battle/idle")
-			cutscene:battlerText(marcy, "You'll get it back\nafter the fight.", {x=marcy.x - 40, y=marcy.y - 60})
 			cutscene:gotoCutscene("fmarcy_spells")
 		end
 	elseif self.marcy.health < 1500 and not self.jamm_disarmed then
