@@ -1,7 +1,8 @@
 local PartyBattler, super = Class(PartyBattler)
 
 function PartyBattler:hurt(amount, exact, color, options)
-	if self.chara.future then
+	options = options or {}
+	if self.chara.future and not options["future_proof"] then
 		super.hurt(self, amount * MathUtils.random(7.2, 7.6), exact, color, options)
 	else
 		super.hurt(self, amount, exact, color, options)
