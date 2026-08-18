@@ -29,7 +29,8 @@ function SnowBullet:onDamage(soul)
 		end
 	end
 	
-	soul.inv_timer = self.inv_timer
+	local inv_frames = self:getInvulnFrames()
+    Game:setInvulnFrames(inv_frames)
 	
 	if all_at_one then
 		Game:gameOver(self.world.soul:getScreenPos())
